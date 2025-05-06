@@ -1,8 +1,32 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 import "remixicon/fonts/remixicon.css";
 
 const page = () => {
+	const [data, setData] = useState({
+		email: "",
+		password: "",
+	});
+	const router = useRouter();
+	const handleLogin = () => {
+		// Handle login logic here
+		console.log("Login button clicked");
+		signIn("credentials", {
+			email: data.email,
+			password: data.password,
+			redirect: false,
+		}).then((callback) => {
+			if (callback?.error) {
+				alert("Invalid credentials");
+			} else {
+				router.push("/");
+			}
+		});
+	};
+
 	return (
 		<div className="min-h-screen w-full flex items-center justify-center bg-gray-200 px-4 py-6">
 			<div className="flex flex-col items-center bg-white w-full max-w-md md:max-w-lg rounded-lg shadow-lg p-6 md:p-10 border border-gray-300">
@@ -34,6 +58,8 @@ const page = () => {
 						type="text"
 						className="mt-2 border border-gray-400 rounded-sm px-2 py-1 w-full h-10"
 						placeholder="name@example.com"
+						onChange={(e) => setData({ ...data, email: e.target.value })}
+						value={data.email}
 					/>
 				</div>
 
@@ -43,6 +69,10 @@ const page = () => {
 						type="password"
 						className="mt-2 border border-gray-400 rounded-sm px-2 py-1 w-full h-10"
 						placeholder="Password"
+						onChange={(e) =>
+							setData({ ...data, password: e.target.value })
+						}
+						value={data.password}
 					/>
 					<h4 className="text-gray-600 text-sm mt-1">
 						Password must be at least 8 characters long and include
@@ -50,7 +80,9 @@ const page = () => {
 					</h4>
 				</div>
 
-				<button className="border rounded-sm bg-black text-white w-full h-10 p-2 mt-4 cursor-pointer">
+				<button className="border rounded-sm bg-black text-white w-full h-10 p-2 mt-4 cursor-pointer"
+					onClick={handleLogin}
+				>
 					Login
 				</button>
 			</div>

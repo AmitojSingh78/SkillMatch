@@ -125,14 +125,9 @@ For backend:
 # Database
 DATABASE_URL="mysql://user:password@host:port/database"
 
-# Authentication
-GOOGLE_CLIENT_ID="your-client-id"
-GOOGLE_CLIENT_SECRET="your-client-secret"
-LINKEDIN_CLIENT_ID="your-client-id"
-LINKEDIN_CLIENT_SECRET="your-client-secret"
-
-# AI Services
-HUGGINGFACE_API_KEY="your-api-key"
+# Auth
+NEXTAUTH_SECRET ="your-secret"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
 For frontend:

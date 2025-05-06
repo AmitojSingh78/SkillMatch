@@ -5,11 +5,10 @@ import { successResponse, errorResponse } from "@/utils/response";
 
 export async function POST(request) {
 	try {
-		const { firstName, lastName, email, password, confirmPassword } =
+		const { username, email, password, confirmPassword } =
 			await request.json();
 		if (
-			!firstName ||
-			!lastName ||
+			!username ||
 			!email ||
 			!password ||
 			!confirmPassword
@@ -33,7 +32,7 @@ export async function POST(request) {
 				errorResponse("Password must be at most 20 characters", 400)
 			);
 		}
-		if (email.includes("@")) {
+		if (!email.includes("@")) {
 			return NextResponse.json(
 				errorResponse("Email must not contain @", 400)
 			);
@@ -49,8 +48,7 @@ export async function POST(request) {
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const newUser = await prisma.users.create({
 			data: {
-				firstName,
-				lastName,
+				username,
 				email,
 				password: hashedPassword,
 			},

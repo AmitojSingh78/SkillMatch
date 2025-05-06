@@ -15,7 +15,7 @@ export const authOptions = {
 			},
 			async authorize(credentials, req) {
 				const { email, password } = credentials;
-				const user = await prisma.user.findUnique({
+				const user = await prisma.users.findUnique({
 					where: { email },
 				});
 				if (!user) {
@@ -29,7 +29,8 @@ export const authOptions = {
 				if (!isPasswordValid) {
 					throw new Error("Invalid password");
 				}
-                
+                console.log(user);
+
 				return user;
 			},
 		}),
