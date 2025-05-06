@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                String            @id @default(cuid())
+  username          String
+  email             String            @unique
+  password          String
+  profile_photo_url String?
+  is_verified       Boolean           @default(false)
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+  Resume            Resumes[]
+  JobApplications   JobApplications[]
+  Jobs              Jobs[]
+  Certifications    Certifications[]
+
+  UserDetails        UserDetails[]
+  InterviewsSessions InterviewsSessions[]
+}
+
+model UserDetails {
+  id           String   @id @default(cuid())
+  user_id      String
+  first_name   String
+  last_name    String
+  phone_number String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  zip_code     String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  user         Users    @relation(fields: [user_id], references: [id])
+}
+
+model Resumes {
+  id          String  @id @default(cuid())
+  user_id     String
+  file_path   String
+  file_name   String
+  parsed_data String?
+
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  user            Users             @relation(fields: [user_id], references: [id])
+  SkillGap        SkillGaps[]
+  JobApplications JobApplications[]
+}
+
+model SkillGaps {
+  id                    String   @id @default(cuid())
+  resume_id             String
+  skill_keywords        String
+  skill_gap             String
+  skill_gap_description String
+  skill_gap_level       String
+  recommended_skills    String
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  resume Resumes @relation(fields: [resume_id], references: [id])
+}
+
+model Roadmaps {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  pdf_link    String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Jobs {
+  id           String   @id @default(cuid())
+  user_id      String
+  title        String
+  description  String
+  company_name String
+  location     String
+  salary       String?
+  job_type     String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user            Users             @relation(fields: [user_id], references: [id])
+  JobApplications JobApplications[]
+}
+
+model JobApplications {
+  id           String   @id @default(cuid())
+  user_id      String
+  resume_id    String
+  job_id       String
+  job_title    String
+  company_name String
+  location     String
+  status       String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  user   Users   @relation(fields: [user_id], references: [id])
+  resume Resumes @relation(fields: [resume_id], references: [id])
+  job    Jobs    @relation(fields: [job_id], references: [id])
+}
+
+model Certifications {
+  id          String    @id @default(cuid())
+  user_id     String
+  title       String
+  description String
+  issued_by   String
+  issue_date  DateTime
+  expiry_date DateTime?
+  link        String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+
+  user Users @relation(fields: [user_id], references: [id])
+}
+
+model InterviewsSessions {
+  id         String   @id @default(cuid())
+  user_id    String
+  date       DateTime
+  time       String
+  duration   String
+  transcript String
+  score      String
+  feedback   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user Users @relation(fields: [user_id], references: [id])
+}
